@@ -1165,6 +1165,29 @@ h1, h2, h3, h4, h5, h6 {
 
   <!-- Scripts -->
   <script>
+        // Mobile menu toggle
+    const menuToggle = document.getElementById('mobile-menu');
+    const navMenu = document.querySelector('.nav-menu');
+
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Animate elements on scroll
+    const animateElements = document.querySelectorAll('[data-animate]');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add(entry.target.getAttribute('data-animate'));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    animateElements.forEach(el => observer.observe(el));
     // Counter animation
 const counterObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -1197,29 +1220,6 @@ const counterObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.stats-grid').forEach(el => {
   counterObserver.observe(el);
 });
-    // Mobile menu toggle
-    const menuToggle = document.getElementById('mobile-menu');
-    const navMenu = document.querySelector('.nav-menu');
-
-    menuToggle.addEventListener('click', () => {
-      menuToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
-
-    // Animate elements on scroll
-    const animateElements = document.querySelectorAll('[data-animate]');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add(entry.target.getAttribute('data-animate'));
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-
-    animateElements.forEach(el => observer.observe(el));
   </script>
 <style>
 @keyframes slideInLeft {
