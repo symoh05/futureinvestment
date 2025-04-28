@@ -1166,46 +1166,64 @@ h1, h2, h3, h4, h5, h6 {
   <!-- Scripts -->
   <script>
         // Mobile menu toggle
-    const menuToggle = document.getElementById('mobile-menu');
-    const navMenu = document.querySelector('.nav-menu');
+const mobileMenu = document.getElementById('mobile-menu');
+const navMenu = document.querySelector('.nav-menu');
 
-    menuToggle.addEventListener('click', () => {
-      menuToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
+mobileMenu.addEventListener('click', () => {
+  mobileMenu.classList.toggle('active');
+  navMenu.classList.toggle('active');
+});
 
-    // Animate elements on scroll
-    const animateElements = document.querySelectorAll('[data-animate]');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add(entry.target.getAttribute('data-animate'));
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
+// Close mobile menu when clicking on nav links
+navMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('active');
+    navMenu.classList.remove('active');
+  });
+});
 
-    animateElements.forEach(el => observer.observe(el));
-    // Counter animation
+// Animate elements on scroll
+const animateElements = document.querySelectorAll('[data-animate]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const animation = entry.target.getAttribute('data-animate');
+      entry.target.classList.add(animation);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+animateElements.forEach(el => observer.observe(el));
+
+// Counter animation with percentage support
 const counterObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       const counters = document.querySelectorAll('.stat-number');
-      const speed = 200; // The lower the faster
+      const speed = 200; // Lower numbers = faster animation
       
       counters.forEach(counter => {
         const updateCount = () => {
-          const target = +counter.getAttribute('data-count');
-          const count = +counter.innerText;
-          const increment = target / speed;
+          const targetValue = counter.getAttribute('data-count');
+          const isPercentage = targetValue.includes('%');
+          const targetNumber = parseFloat(targetValue.replace('%', ''));
+          const currentText = counter.innerText;
+          const currentNumber = parseFloat(currentText.replace('%', '')) || 0;
+          const increment = targetNumber / speed;
           
-          if (count < target) {
-            counter.innerText = Math.ceil(count + increment);
+          if (currentNumber < targetNumber) {
+            const newValue = Math.min(
+              Math.ceil(currentNumber + increment),
+              targetNumber
+            );
+            counter.innerText = isPercentage ? `${newValue}%` : newValue;
             setTimeout(updateCount, 1);
           } else {
-            counter.innerText = target;
+            counter.innerText = isPercentage ? `${targetNumber}%` : targetNumber;
+            if (targetNumber >= 1000 && !isPercentage) {
+              counter.innerText = `${targetNumber}+`;
+            }
           }
         };
         
@@ -1217,9 +1235,53 @@ const counterObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.5 });
 
+// Observe all stats sections
 document.querySelectorAll('.stats-grid').forEach(el => {
   counterObserver.observe(el);
 });
+
+// Hero slideshow functionality
+const heroSlides = document.querySelectorAll('.hero-slide');
+let currentSlide = 0;
+
+function nextSlide() {
+  heroSlides[currentSlide].classList.remove('active');
+  currentSlide = (currentSlide + 1) % heroSlides.length;
+  heroSlides[currentSlide].classList.add('active');
+}
+
+// Start slideshow if hero slides exist
+if (heroSlides.length > 0) {
+  setInterval(nextSlide, 5000); // Change slide every 5 seconds
+}
+
+// Testimonial dots navigation
+const testimonialDots = document.querySelectorAll('.testimonial-dot');
+const testimonialsContainer = document.querySelector('.testimonials-container');
+
+if (testimonialDots.length > 0 && testimonialsContainer) {
+  testimonialDots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      testimonialsContainer.scrollTo({
+        left: testimonialsContainer.offsetWidth * index,
+        behavior: 'smooth'
+      });
+      testimonialDots.forEach(d => d.classList.remove('active'));
+      dot.classList.add('active');
+    });
+  });
+
+  testimonialsContainer.addEventListener('scroll', () => {
+    const scrollPosition = testimonialsContainer.scrollLeft;
+    const slideWidth = testimonialsContainer.offsetWidth;
+    const currentIndex = Math.round(scrollPosition / slideWidth);
+
+    testimonialDots.forEach(dot => dot.classList.remove('active'));
+    if (testimonialDots[currentIndex]) {
+      testimonialDots[currentIndex].classList.add('active');
+    }
+  });
+    }
   </script>
 <style>
 @keyframes slideInLeft {
