@@ -6,7 +6,7 @@
   <title>Future Investment Lands Kenya | Premium Land for Sale</title>
   <meta name="description" content="Future Investment Lands Kenya offers premium land parcels across prime locations. Secure your future with our carefully selected residential, commercial, and agricultural plots with clear titles.">
   <meta name="keywords" content="land for sale Kenya, 50x100 plots, investment land Kenya, prime lands Kenya, real estate Kenya, affordable land Kenya">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* ===== Global Styles ===== */
     :root {
@@ -22,7 +22,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Playfair Display', serif;
     }
     
     body {
@@ -162,7 +162,39 @@
       background: var(--dark);
       transition: all 0.3s;
     }
-    
+    /* Statistics Section */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.15);
+}
+
+.stat-number {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+  transition: all 1s ease-out;
+}
+
+.stat-title {
+  font-size: 1.2rem;
+  color: var(--white);
+  }
     /* ===== Hero Section ===== */
     .hero {
       position: relative;
@@ -942,7 +974,35 @@
       </div>
     </div>
   </section>
-
+<!-- Statistics Section -->
+<section class="dark-section">
+  <div class="container">
+    <h2 data-animate="slide-in-up">By The Numbers</h2>
+    <p data-animate="slide-in-up" class="delay-1">Our track record speaks for itself</p>
+    
+    <div class="stats-grid">
+      <div class="stat-card" data-animate="slide-in-up">
+        <div class="stat-number" data-count="850">0</div>
+        <div class="stat-title">Happy Clients</div>
+      </div>
+      
+      <div class="stat-card" data-animate="slide-in-up" class="delay-1">
+        <div class="stat-number" data-count="12">0</div>
+        <div class="stat-title">Years Experience</div>
+      </div>
+      
+      <div class="stat-card" data-animate="slide-in-up" class="delay-2">
+        <div class="stat-number" data-count="1500">0</div>
+        <div class="stat-title">Acres Sold</div>
+      </div>
+      
+      <div class="stat-card" data-animate="slide-in-up" class="delay-3">
+        <div class="stat-number" data-count="98">0</div>
+        <div class="stat-title">% Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
   <!-- Testimonials Section -->
   <section class="primary">
     <div class="container">
@@ -1077,6 +1137,38 @@
 
   <!-- Scripts -->
   <script>
+    // Counter animation
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const counters = document.querySelectorAll('.stat-number');
+      const speed = 200; // The lower the faster
+      
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-count');
+          const count = +counter.innerText;
+          const increment = target / speed;
+          
+          if (count < target) {
+            counter.innerText = Math.ceil(count + increment);
+            setTimeout(updateCount, 1);
+          } else {
+            counter.innerText = target;
+          }
+        };
+        
+        updateCount();
+      });
+      
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stats-grid').forEach(el => {
+  counterObserver.observe(el);
+});
     // Mobile menu toggle
     const menuToggle = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
